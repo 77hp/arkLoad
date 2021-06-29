@@ -2,19 +2,39 @@ package me.linenote.arkload;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CrawlingTest {
   public static void main(String[] args) throws IOException {
+
     Connection.Response response = Jsoup
         .connect("https://lostark.game.onstove.com/Profile/Character/갈마동갈매기")
         .method(Connection.Method.GET)
         .execute();
     Document document = response.parse();
+
+    Pattern memberNoPattern = Pattern.compile("_memberNo = \\'.+\\'");
+    Pattern pcIdPattern = Pattern.compile("_pcId = \\'.+\\'");
+    Pattern worldNoPattern = Pattern.compile("_worldNo = \\'.+\\'");
+
+    // 13 번째 script 태그안에는 회원 정보가 담겨있습니다.
+    // _memberNo : 회원의 고유 번호
+    // _pcId : 미확인
+    // _worldNo : 서버 고유 번호
+    Element script = document.getElementsByTag("script").get(12);
+    String scriptData = script.data();
+
+    Matcher memberNoMatcher = memberNoPattern.matcher(scriptData);
+    Matcher pcIdMatcher = pcIdPattern.matcher(scriptData);
+    Matcher worldNoMatcher = worldNoPattern.matcher(scriptData);
 
     // 원정대 레벨
     Element select = document.selectFirst("div.level-info__expedition span:eq(1)");
