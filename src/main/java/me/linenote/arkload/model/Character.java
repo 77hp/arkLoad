@@ -60,7 +60,7 @@ public class Character {
   /**
    * 특수장비 (나침반, 부적, 문장)
    */
-  private List<Item> specialItems;
+  private List<Equip> specialItems;
 
   // TODO : 캐릭터 정보 추가 예정
 }
