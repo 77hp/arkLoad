@@ -1,10 +1,17 @@
 package me.linenote.arkload.model;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.util.List;
 
 /**
  * 캐릭터 정보
  */
+@Getter
+@Setter
+@ToString
 public class Character {
 
   /**
@@ -25,12 +32,12 @@ public class Character {
   /**
    * 장착 아이템 레벨
    */
-  private int itemLevel;
+  private float equipItemLevel;
 
   /**
    * 달성 아이템 레벨
    */
-  private int achieveItemLevel;
+  private float achievedItemLevel;
 
   /**
    * 칭호
@@ -50,7 +57,7 @@ public class Character {
   /**
    * 영지 이름
    */
-  private String wisdom;
+  private String wisdomName;
 
   /**
    * 영지 레벨
@@ -58,9 +65,44 @@ public class Character {
   private int wisdomLevel;
 
   /**
-   * 특수장비 (나침반, 부적, 문장)
+   * 전투 특성 - 치명
    */
-  private List<Equip> specialItems;
+  private int abilityFatal;
+
+  /**
+   * 전투 특성 - 특화
+   */
+  private int abilitySpecialized;
+
+  /**
+   * 전투 특성 - 제압
+   */
+  private int abilitySuppress;
+
+  /**
+   * 전투 특성 - 신속
+   */
+  private int abilityFast;
+
+  /**
+   * 전투 특성 - 인내
+   */
+  private int abilityPatience;
+
+  /**
+   * 전투 특성 - 숙련
+   */
+  private int abilitySkill;
+
+  /**
+   * 카드
+   */
+  private List<Card> cards;
+
+  /**
+   * 카드 세트
+   */
+  private List<CardSet> cardSets;
 
   // TODO : 캐릭터 정보 추가 예정
 }

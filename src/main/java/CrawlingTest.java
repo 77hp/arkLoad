@@ -1,22 +1,24 @@
-package me.linenote.arkload;
-
+import me.linenote.arkload.model.Card;
+import me.linenote.arkload.model.CardSet;
 import me.linenote.arkload.model.Character;
-import org.json.JSONException;
+import me.linenote.arkload.model.Skill;
 import org.json.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.json.JsonException;
 
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CrawlingTest {
-  public static void main(String[] args) throws IOException, JSONException {
+  public static void main(String[] args) throws IOException, JsonException {
 
     Connection.Response response = Jsoup
-        .connect("https://lostark.game.onstove.com/Profile/Character/대머리")
+        .connect("https://lostark.game.onstove.com/Profile/Character/괴물쥐")
         .method(Connection.Method.GET)
         .execute();
     Document document = response.parse();
@@ -178,36 +180,71 @@ public class CrawlingTest {
 //    키 : CardSet
 //    키 : Card
 
-    JSONObject cards = jsonObject.getJSONObject("Card");
-    Iterator cardsKeys = cards.keys();
-    while (cardsKeys.hasNext()) {
-      System.out.println("카드 : " + cardsKeys.next());
-      JSONObject cardElement1 = cards.getJSONObject(cardsKeys.next().toString());
-      Iterator cardElement1Keys = cardElement1.keys();
-      while (cardElement1Keys.hasNext()) {
-        System.out.println("카드(1) : " + cardElement1Keys.next());
-        System.out.println(cardElement1);
-        JSONObject cardElement2 = cardElement1.getJSONObject(cardElement1Keys.next().toString());
-        Iterator keys1 = cardElement2.keys();
-//        while (keys1.hasNext()) {
-//          System.out.println("카드(2) : " + keys1.next());
-//        }
-      }
-    }
+    List<Card> cards = new ArrayList<>();
+    JSONObject cardElement1 = jsonObject.getJSONObject("Card");
+    cardElement1.keySet().forEach(k1 -> {
+      JSONObject cardElement2 = cardElement1.getJSONObject(k1);
+      JSONObject element_000 = cardElement2.getJSONObject("Element_000"); // 카드 이름
+      JSONObject element_001 = cardElement2.getJSONObject("Element_001"); // 카드 각 상태 및 등급
+      JSONObject element_002 = cardElement2.getJSONObject("Element_002"); // 카드 설명
 
-//    JSONObject cardSet = jsonObject.getJSONObject("CardSet");
-//    Iterator cardSetKeys = cardSet.keys();
-//    while (cardSetKeys.hasNext()) {
-//      System.out.println("카드셋 : " + cardSetKeys.next());
-//    }
-//
-//    JSONObject equip = jsonObject.getJSONObject("Equip");
-//    Iterator equipKeys = equip.keys();
-//    while (equipKeys.hasNext()) {
-//      System.out.println("장비 : " + equipKeys.next());
-//    }
-//
-//    JSONObject skill = jsonObject.getJSONObject("Skill");
+      String cardName = element_000.getString("value");
+      int awakeCount = element_001.getJSONObject("value").getInt("awakeCount");
+      int awakeTotal = element_001.getJSONObject("value").getInt("awakeTotal");
+      int tierGrade = element_001.getJSONObject("value").getInt("tierGrade");
+      String description = element_002.getString("value");
+
+      Card card = new Card();
+      card.setName(cardName);
+      card.setAwakeTotal(awakeTotal);
+      card.setAwakeCount(awakeCount);
+      card.setTierGrade(tierGrade);
+      card.setDescription(description);
+      cards.add(card);
+
+      System.out.println(card);
+    });
+    character.setCards(cards);
+
+    List<CardSet> cardSets = new ArrayList<>();
+    JSONObject cardSetElement1 = jsonObject.getJSONObject("CardSet");
+    cardSetElement1.keySet().forEach(k1 -> {
+      JSONObject cardSetElement2 = cardSetElement1.getJSONObject(k1);
+      cardSetElement2.keySet().forEach(k2 -> {
+        if (!k2.equals("EffectIndex")) {
+          JSONObject cardSetElement3 = cardSetElement2.getJSONObject(k2);
+
+          String name = cardSetElement3.getString("title");
+          String description = cardSetElement3.getString("desc");
+
+          CardSet cardSet = new CardSet();
+          cardSet.setName(name);
+          cardSet.setDescription(description);
+          cardSets.add(cardSet);
+
+          System.out.println(cardSet);
+        }
+      });
+    });
+    character.setCardSets(cardSets);
+
+    List<Skill> skills = new ArrayList<>();
+    JSONObject skillElement1 = jsonObject.getJSONObject("Skill");
+    skillElement1.keySet().forEach(k1 -> {
+      System.out.println(k1);
+      JSONObject skillElement2 = skillElement1.getJSONObject(k1);
+      JSONObject element_000 = skillElement2.getJSONObject("Element_000");// 스킬 이름
+      JSONObject element_001 = skillElement2.getJSONObject("Element_001");// 스킬 이름
+      JSONObject element_002 = skillElement2.getJSONObject("Element_002");// 스킬 이름
+      JSONObject element_003 = skillElement2.getJSONObject("Element_003");// 스킬 이름
+//      JSONObject element_004 = skillElement2.getJSONObject("Element_004");// 스킬 이름
+//      JSONObject element_005 = skillElement2.getJSONObject("Element_005");// 스킬 이름
+//      JSONObject element_006 = skillElement2.getJSONObject("Element_006");// 스킬 이름
+//      JSONObject element_007 = skillElement2.getJSONObject("Element_007");// 스킬 이름
+//      JSONObject element_008 = skillElement2.getJSONObject("Element_008");// 스킬 이름
+
+      String skillName = element_000.getString("value");
+    });
 //    Iterator skillKeys = skill.keys();
 //    while (skillKeys.hasNext()) {
 //      System.out.println("스킬 : " + skillKeys.next());
